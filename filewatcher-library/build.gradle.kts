@@ -11,4 +11,7 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation("io.methvin:directory-watcher:0.15.0") //https://github.com/gmethvin/directory-watcher
+}
 

@@ -1,2 +1,2 @@
-This is a pet project of library that keeps track of text files
+This is a pet project that looks after text files
 
