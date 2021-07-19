@@ -2,14 +2,13 @@ package index
 
 import java.io.File
 import java.nio.file.Files
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Dmitry Borodin on 7/19/21.
  */
-class Indexer {
+internal class Indexer {
 
-    private val state = ConcurrentHashMap<String, File>() //word to files
+    private val state = SynchronizedIndexState()
 
     fun addPathToIndex(file: File) = when {
         file.isDirectory -> {
@@ -17,9 +16,7 @@ class Indexer {
         }
         file.isFile -> {
             val type = Files.probeContentType(file.toPath())
-            synchronized(state) {
-                //modify state
-            }
+            //state.add
         }
         else -> {
             Logger.debug("cannot add since not a directory and not a file $file")
@@ -36,9 +33,7 @@ class Indexer {
             file.listFiles().forEach { removePath(it) }
         }
         file.isFile -> {
-            synchronized(state) {
-                state.forEach { s, file -> if () }
-            }
+            state.removeFile(file)
         }
         else -> {
             Logger.debug("cannot remove since not a directory and not a file $file")
