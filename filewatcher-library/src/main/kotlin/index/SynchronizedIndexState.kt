@@ -16,7 +16,7 @@ internal class SynchronizedIndexState {
             if (state[word] == null) {
                 state.put(word, setOf(file))
             } else {
-                val newSet = hashSetOf(state[word]).also { it.add(file) }
+                val newSet = mutableSetOf(state[word]).also { it -> it.add(file) }
                 state.put(word, newSet)
             }
         }

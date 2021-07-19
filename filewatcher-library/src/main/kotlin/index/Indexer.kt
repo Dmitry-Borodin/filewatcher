@@ -1,5 +1,6 @@
 package index
 
+import Logger
 import java.io.File
 import java.nio.file.Files
 
@@ -10,17 +11,27 @@ internal class Indexer {
 
     private val state = SynchronizedIndexState()
 
-    fun addPathToIndex(file: File) = when {
+    fun addPathToIndex(file: File): Unit = when {
         file.isDirectory -> {
             file.listFiles().forEach { it -> addPathToIndex(it) }
         }
         file.isFile -> {
             val type = Files.probeContentType(file.toPath())
-            //state.add
+            if (type.contains("text")) {
+                addTextFileToIndex(file)
+            }
+            Unit
         }
         else -> {
             Logger.debug("cannot add since not a directory and not a file $file")
         }
+    }
+
+    private fun addTextFileToIndex(file: File) {
+        file
+            .forEachLine(Charsets.UTF_8) { it -> it.split("\\s+".toRegex())
+                .forEach { state.add(it, file) }
+            }
     }
 
     fun pathModified(file: File) {
@@ -28,9 +39,9 @@ internal class Indexer {
         addPathToIndex(file)
     }
 
-    fun removePath(file: File) = when {
+    fun removePath(file: File): Unit = when {
         file.isDirectory -> {
-            file.listFiles().forEach { removePath(it) }
+            file.listFiles().forEach { it -> removePath(it) }
         }
         file.isFile -> {
             state.removeFile(file)
