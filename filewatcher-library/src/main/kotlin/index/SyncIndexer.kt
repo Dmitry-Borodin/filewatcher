@@ -7,7 +7,7 @@ import java.nio.file.Files
 /**
  * @author Dmitry Borodin on 7/19/21.
  */
-internal class Indexer {
+internal class SyncIndexer {
 
     private val state = SynchronizedIndexState()
 
@@ -19,8 +19,9 @@ internal class Indexer {
             val type = Files.probeContentType(file.toPath())
             if (type.contains("text")) {
                 addTextFileToIndex(file)
+            } else {
+                //nothing
             }
-            Unit
         }
         else -> {
             Logger.debug("cannot add since not a directory and not a file $file")

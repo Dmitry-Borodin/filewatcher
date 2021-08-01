@@ -6,6 +6,6 @@ package index.GraphIndexer
  * Indexer based on graph filesystem representation - most probably will be lock-free
  *
  */
-class GraphIndexer {
+internal class GraphIndexer {
 }
 

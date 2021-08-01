@@ -13,10 +13,11 @@ internal class SynchronizedIndexState {
         if (!file.isFile) Logger.error("add file was not a file")
 //        state.putIfAbsent()
         synchronized(state) {
-            if (state[word] == null) {
+            val files = state[word]
+            if (files == null) {
                 state.put(word, setOf(file))
             } else {
-                val newSet = mutableSetOf(state[word]).also { it -> it.add(file) }
+                val newSet = HashSet(files).also { it -> it.add(file) }
                 state.put(word, newSet)
             }
         }
