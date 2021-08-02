@@ -39,9 +39,11 @@ internal class SyncIndexerTest {
 
     @Test
     fun pathModified() {
+        //if FileWatcher will support more than one Indexer - copy tests from there
     }
 
     @Test
     fun removePath() {
+        //if FileWatcher will support more than one Indexer - copy tests from there
     }
 }

@@ -49,7 +49,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
      * Currently doesn't support child folders e.q. you cannot exclude subfolder from watched parent folder
      */
     @Synchronized
-    private fun removeFolders(foldersToRemove: List<Path>) {
+    fun removeFolders(foldersToRemove: List<Path>) {
         watchedFolders.removeAll(foldersToRemove)
         refreshWatcherLibrary()
     }

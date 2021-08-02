@@ -65,7 +65,21 @@ internal class FileWatcherTest {
         }
         fileWatcher.addToIndex(testFolder)
         textFile.delete()
-        Thread.sleep(100) //todo add handle to FileWatcher to know if sync is finished. If possible.
+        Thread.sleep(100)
+        assertEquals(true, fileWatcher.getFilesWithWord("boring").isEmpty())
+    }
+
+    @Test
+    fun testHandleStopTracking() {
+        val fileWatcher = FileWatcher()
+        val testFolder = createResourceFolder()
+        val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt").apply {
+            printWriter().use { out ->
+                out.write("some boring text A")
+            }
+        }
+        fileWatcher.addToIndex(testFolder)
+        fileWatcher.removeFromIndex(listOf(testFolder))
         assertEquals(true, fileWatcher.getFilesWithWord("boring").isEmpty())
     }
 
