@@ -1,3 +1,4 @@
+import index.SyncIndexer
 import java.io.File
 import java.lang.Exception
 
@@ -6,15 +7,19 @@ import java.lang.Exception
  */
 class FileWatcher {
 
+    private val indexer: SyncIndexer = SyncIndexer()
+
     /**
      * Returns list of files among indexed resources that contain substring passed
      */
-    fun getFilesFor(substring: String): List<File> {
-        return emptyList()
+    fun getFilesForWord(substring: String): List<File> {
+        return indexer.getFilesWithWord(substring)
     }
 
     fun addToIndex(folder: File) {
-
+        indexer.addPathToIndex(folder)
     }
+
+
 
 }

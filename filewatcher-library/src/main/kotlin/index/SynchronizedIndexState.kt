@@ -40,4 +40,9 @@ internal class SynchronizedIndexState {
             }
         }
     }
+
+    fun getFilesForWork(word: String): List<File> {
+        //add check that this is word?
+        return state.get(word)?.toList() ?: emptyList()
+    }
 }

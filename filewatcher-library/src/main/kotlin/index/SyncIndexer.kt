@@ -35,12 +35,12 @@ internal class SyncIndexer {
             }
     }
 
-    fun pathModified(file: File) {
+    private fun pathModified(file: File) {
         removePath(file)
         addPathToIndex(file)
     }
 
-    fun removePath(file: File): Unit = when {
+    private fun removePath(file: File): Unit = when {
         file.isDirectory -> {
             file.listFiles().forEach { it -> removePath(it) }
         }
@@ -53,6 +53,6 @@ internal class SyncIndexer {
     }
 
     fun getFilesWithWord(word: String): List<File> {
-        return emptyList()
+        return state.getFilesForWork(word)
     }
 }
