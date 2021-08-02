@@ -2,6 +2,8 @@ package index
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -28,13 +30,13 @@ internal class SyncIndexerTest {
         val indexer = SyncIndexer()
         val testFolder = createResourceFolder()
         indexer.addPathToIndex(testFolder)
-        assert(indexer.getFilesWithWord("boring").isEmpty())
+        assertTrue(indexer.getFilesWithWord("boring").isEmpty())
         val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt")
             .printWriter().use { out ->
                 out.write("some boring text A")
             }
         indexer.addPathToIndex(testFolder)
-        Assertions.assertEquals(1, indexer.getFilesWithWord("boring").size)
+        assertEquals(1, indexer.getFilesWithWord("boring").size)
     }
 
     @Test

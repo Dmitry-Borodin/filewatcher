@@ -1,5 +1,7 @@
 package index
 
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -29,14 +31,14 @@ class UtilsTest {
 
     @Test
     fun testPathCreatingWorks() {
-        assert(Files.notExists(Path.of(TEST_FOLDER)))
+        assertTrue(Files.notExists(Path.of(TEST_FOLDER)))
         val resources = createResourceFolder()
-        assert(Files.exists(Path.of(TEST_FOLDER)))
+        assertTrue(Files.exists(Path.of(TEST_FOLDER)))
         val textFile = File(resources.toAbsolutePath().toString() + "/test.txt")
             .printWriter().use { out ->
                 out.write("some boring text A")
             }
         deleteResourceFolder()
-        assert(Files.notExists(Path.of(TEST_FOLDER)))
+        assertTrue(Files.notExists(Path.of(TEST_FOLDER)))
     }
 }
