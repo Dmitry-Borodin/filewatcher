@@ -2,6 +2,7 @@ import java.io.File
 
 /**
  * @author Dmitry Borodin on 8/2/21.
+ * Note: assertions are disabled by default on Kotlin. Run with JVM options -ea to see that all assertions are passing
  */
 fun main() {
 
@@ -23,7 +24,7 @@ fun main() {
     //now we can get files by word, that is contained in watched folder
     val foundFiles = fileWatcher.getFilesWithWord("sample")
     assert(foundFiles.size == 1)
-    assert(foundFiles[0].toAbsolutePath().toString() == "Sample folder/sample.txt")
+    assert(foundFiles[0].toAbsolutePath().toString().contains("sample.txt", false)) //this path can be a full path, not related we used to create a file
 
     //if content is modified while on background
     File(folder.path.toString() + "/sample.txt")
