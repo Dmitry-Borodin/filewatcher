@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 /**
  * @author Dmitry Borodin on 8/2/21.
  *
- *
  */
 internal class WatcherTest {
 

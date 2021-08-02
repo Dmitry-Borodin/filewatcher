@@ -4,8 +4,8 @@ plugins {
 
 }
 
-group = "me.dmitry"
-version = "1.0-SNAPSHOT"
+group = "me.dmitry.filewatcher"
+version = "0.1"
 
 repositories {
     mavenCentral()
