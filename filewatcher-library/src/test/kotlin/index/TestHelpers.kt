@@ -30,9 +30,9 @@ class UtilsTest {
     @Test
     fun testPathCreatingWorks() {
         assert(Files.notExists(Path.of(TEST_FOLDER)))
-        val resouces = createResourceFolder()
+        val resources = createResourceFolder()
         assert(Files.exists(Path.of(TEST_FOLDER)))
-        val textFile = File(resouces.toAbsolutePath().toString() + "/test.txt")
+        val textFile = File(resources.toAbsolutePath().toString() + "/test.txt")
             .printWriter().use { out ->
                 out.write("some boring text A")
             }

@@ -1,7 +1,7 @@
 package index
 
+import Logger
 import watcher.isFile
-import java.io.File
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
@@ -11,16 +11,10 @@ import java.util.concurrent.ConcurrentHashMap
 internal class SynchronizedIndexState {
     private val state = ConcurrentHashMap<String, Set<Path>>()
 
-    @Synchronized //todo remove synchronized
     fun add(word: String, file: Path) {
         if (!file.isFile()) Logger.error("add file was not a file")
-//        state.putIfAbsent()
-        val files = state[word]
-        if (files == null) {
-            state.put(word, setOf(file))
-        } else {
-            val newSet = HashSet(files).also { it -> it.add(file) }
-            state.put(word, newSet)
+        state.compute(word) { word, value ->
+            if (value == null) setOf(file) else HashSet(value).also { it -> it.add(file) }
         }
     }
 
