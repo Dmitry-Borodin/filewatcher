@@ -1,7 +1,6 @@
 import index.SyncIndexer
 import watcher.Watcher
 import java.io.Closeable
-import java.lang.RuntimeException
 import java.nio.file.Path
 
 /**
@@ -36,19 +35,19 @@ class FileWatcher: Closeable {
     }
 
     /**
-     * Add folder content of which will be indexed. This will follow symbolic links.
+     * Add folder or file content of which will be indexed. This will follow symbolic links.
      */
-    fun addToIndex(folder: Path) {
-        indexer.addPathToIndex(folder)
-        watcher.addFolders(listOf(folder))
+    fun addToIndex(path: Path) {
+        indexer.addPathToIndex(path)
+        watcher.addPaths(listOf(path))
     }
 
     /**
-     * Add folders content of which will be indexed. This will follow symbolic links.
+     * Add folders or files content of which will be indexed. This will follow symbolic links.
      */
     fun addToIndex(folders: List<Path>) {
         folders.forEach { indexer.addPathToIndex(it) }
-        watcher.addFolders(folders)
+        watcher.addPaths(folders)
     }
 
     override fun close() {

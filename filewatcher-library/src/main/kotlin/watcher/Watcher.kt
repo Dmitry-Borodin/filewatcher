@@ -20,7 +20,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
     private val watchedFolders: MutableSet<Path> = mutableSetOf()
 
     @Synchronized
-    fun addFolders(foldersToAdd: List<Path>) {
+    fun addPaths(foldersToAdd: List<Path>) {
         watchedFolders.addAll(foldersToAdd)
         refreshWatcherLibrary()
     }
@@ -37,7 +37,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
                     DirectoryChangeEvent.EventType.OVERFLOW -> {
                         //overflow occured and some events may lost, we need to recalculate index
                         //todo add delay to not overload already overflown system
-                        addFolders(emptyList())
+                        addPaths(emptyList())
                     }
                 }
             }

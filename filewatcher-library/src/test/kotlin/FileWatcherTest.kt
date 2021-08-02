@@ -1,7 +1,7 @@
 import index.createResourceFolder
 import index.deleteResourceFolder
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -33,7 +33,7 @@ internal class FileWatcherTest {
                 out.write("some boring text A")
             }
         Thread.sleep(100) //todo add handle to FileWatcher to know if sync is finished. If possible.
-        Assertions.assertEquals(1, fileWatcher.getFilesWithWord("boring").size)
+        assertEquals(1, fileWatcher.getFilesWithWord("boring").size)
     }
 
     @Test
@@ -66,6 +66,23 @@ internal class FileWatcherTest {
         fileWatcher.addToIndex(testFolder)
         textFile.delete()
         Thread.sleep(100) //todo add handle to FileWatcher to know if sync is finished. If possible.
-        assert(fileWatcher.getFilesWithWord("boring").isEmpty())
+        assertEquals(true, fileWatcher.getFilesWithWord("boring").isEmpty())
+    }
+
+    @Test
+    fun canTrackIndividualFiles() {
+        val fileWatcher = FileWatcher()
+        val testFolder = createResourceFolder()
+        val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt").apply {
+            printWriter().use { out ->
+                out.write("A")
+            }
+        }
+        fileWatcher.addToIndex(textFile.toPath())
+        textFile.printWriter().use { out ->
+            out.write("some boring text A")
+        }
+        Thread.sleep(100)
+        assertEquals(true, fileWatcher.getFilesWithWord("boring").isEmpty())
     }
 }
