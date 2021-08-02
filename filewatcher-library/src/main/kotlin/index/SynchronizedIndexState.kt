@@ -13,7 +13,7 @@ internal class SynchronizedIndexState {
 
     @Synchronized //todo remove synchronized
     fun add(word: String, file: Path) {
-        if (!file.isFile) Logger.error("add file was not a file")
+        if (!file.isFile()) Logger.error("add file was not a file")
 //        state.putIfAbsent()
         val files = state[word]
         if (files == null) {
@@ -26,7 +26,7 @@ internal class SynchronizedIndexState {
 
     @Synchronized
     fun removeFile(file: Path) {
-        if (!file.isFile) Logger.error("add file was not a file")
+        if (!file.isFile()) Logger.error("add file was not a file")
         val iterator = state.iterator()
         while (iterator.hasNext()) {
             val entry = iterator.next()

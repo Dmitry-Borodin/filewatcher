@@ -65,5 +65,5 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
     }
 }
 
-internal val Path.isFile: Boolean = Files.isRegularFile(this)
-internal val Path.isDirectoryToFollow: Boolean = Files.isDirectory(this) || Files.isSymbolicLink(this)
+internal fun Path.isFile(): Boolean = Files.isRegularFile(this)
+internal fun Path.isDirectoryToFollow(): Boolean = Files.isDirectory(this) || Files.isSymbolicLink(this)

@@ -1,6 +1,8 @@
 package index
 
 import Logger
+import watcher.isDirectoryToFollow
+import watcher.isFile
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -16,10 +18,10 @@ internal class SyncIndexer {
      * Will follow symlinks
      */
     fun addPathToIndex(path: Path): Unit = when {
-        Files.isDirectory(path) ||  Files.isSymbolicLink(path) -> {
+        path.isDirectoryToFollow() -> {
             Files.walk(path).forEach { it -> addPathToIndex(it) }
         }
-        Files.isRegularFile(path) -> {
+        path.isFile() -> {
             val type = Files.probeContentType(path)
             if (type.contains("text")) {
                 addTextFileToIndex(path)
@@ -46,10 +48,10 @@ internal class SyncIndexer {
     }
 
     fun removePath(path: Path): Unit = when {
-        Files.isDirectory(path) ||  Files.isSymbolicLink(path) -> {
+        path.isDirectoryToFollow() -> {
             Files.walk(path).forEach { it -> removePath(it) }
         }
-        Files.isRegularFile(path) -> {
+        path.isFile() -> {
             state.removeFile(path)
         }
         else -> {
