@@ -35,12 +35,12 @@ internal class SyncIndexer {
             }
     }
 
-    private fun pathModified(file: File) {
+    fun pathModified(file: File) {
         removePath(file)
         addPathToIndex(file)
     }
 
-    private fun removePath(file: File): Unit = when {
+    fun removePath(file: File): Unit = when {
         file.isDirectory -> {
             file.listFiles().forEach { it -> removePath(it) }
         }
