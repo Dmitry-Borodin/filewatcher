@@ -1,10 +1,6 @@
 import index.SyncIndexer
-import io.methvin.watcher.DirectoryChangeEvent
-import io.methvin.watcher.DirectoryWatcher
 import watcher.Watcher
 import java.io.Closeable
-import java.io.File
-import java.lang.Exception
 import java.nio.file.Path
 
 /**

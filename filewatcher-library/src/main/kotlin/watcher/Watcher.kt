@@ -22,11 +22,11 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
     @Synchronized
     fun addFolders(foldersToAdd: List<Path>) {
         watchedFolders.addAll(foldersToAdd)
-        watcher?.close()
         refreshWatcherLibrary()
     }
 
     private fun refreshWatcherLibrary() {
+        watcher?.close()
         watcher = DirectoryWatcher.builder()
             .paths(watchedFolders.toList())
             .listener { dirChangeEvent ->

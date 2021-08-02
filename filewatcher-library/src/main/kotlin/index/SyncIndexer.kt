@@ -19,7 +19,11 @@ internal class SyncIndexer {
      */
     fun addPathToIndex(path: Path): Unit = when {
         path.isDirectoryToFollow() -> {
-            Files.walk(path).forEach { it -> addPathToIndex(it) }
+            Files
+                .walk(path)
+                .filter { it != path }
+                .forEach { it ->
+                    addPathToIndex(it) }
         }
         path.isFile() -> {
             val type = Files.probeContentType(path)
