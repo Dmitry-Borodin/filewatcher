@@ -16,32 +16,38 @@ internal class SyncIndexer {
     /**
      * Will follow symlinks
      */
-    fun addPathToIndex(path: Path): Unit = when {
-        path.isDirectoryToFollow() -> {
-            Files
-                .walk(path)
-                .filter { it != path }
-                .forEach { it ->
-                    addPathToIndex(it) }
-        }
-        path.isFile() -> {
-            val type = Files.probeContentType(path)
-            if (type.contains("text")) {
-                addTextFileToIndex(path)
-            } else {
-                //nothing
+    fun addPathToIndex(path: Path) {
+        if (!path.toFile().canRead()) return
+
+        when {
+            path.isDirectoryToFollow() -> {
+                Files
+                    .walk(path)
+                    .filter { it != path }
+                    .forEach { it ->
+                        addPathToIndex(it)
+                    }
             }
-        }
-        else -> {
-            Logger.debug("cannot add since not a directory and not a file $path")
+            //todo path.isFile() is false for non absolute path, fix it and print error for else, for example if have no permission to read
+            else -> {
+                val type = Files.probeContentType(path)
+                if (type.contains("text")) {
+                    addTextFileToIndex(path)
+                } else {
+                    //nothing
+                }
+            }
         }
     }
 
     private fun addTextFileToIndex(file: Path) {
+        if (!file.toFile().canRead()) return
+
         file
             .toFile()
-            .forEachLine(Charsets.UTF_8) { it -> it.split("\\s+".toRegex())
-                .forEach { state.add(it, file) }
+            .forEachLine(Charsets.UTF_8) { it ->
+                it.split("\\s+".toRegex())
+                    .forEach { state.add(it, file) }
             }
     }
 
@@ -57,11 +63,8 @@ internal class SyncIndexer {
                 .filter { it != path }
                 .forEach { it -> removePath(it) }
         }
-        path.isFile() -> {
-            state.removeFile(path)
-        }
         else -> {
-            Logger.debug("cannot remove since not a directory and not a file $path")
+            state.removeFile(path)
         }
     }
 
