@@ -42,6 +42,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
                 }
             }
             .build()
+            .also { it.watchAsync() }
     }
 
     /**

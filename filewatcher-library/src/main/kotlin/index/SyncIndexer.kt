@@ -3,7 +3,6 @@ package index
 import Logger
 import watcher.isDirectoryToFollow
 import watcher.isFile
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -53,7 +52,10 @@ internal class SyncIndexer {
 
     fun removePath(path: Path): Unit = when {
         path.isDirectoryToFollow() -> {
-            Files.walk(path).forEach { it -> removePath(it) }
+            Files
+                .walk(path)
+                .filter { it != path }
+                .forEach { it -> removePath(it) }
         }
         path.isFile() -> {
             state.removeFile(path)

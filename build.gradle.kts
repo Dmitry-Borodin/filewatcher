@@ -13,6 +13,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":filewatcher-library"))
     testImplementation(kotlin("test"))
 }
 
