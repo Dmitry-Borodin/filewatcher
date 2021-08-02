@@ -16,11 +16,13 @@ import java.nio.file.Path
  */
 internal class Watcher(private val callback: WatcherCallback) : Closeable {
 
+    private var isClosed = false;
     private var watcher: DirectoryWatcher? = null
     private val watchedFolders: MutableSet<Path> = mutableSetOf()
 
     @Synchronized
     fun addPaths(foldersToAdd: List<Path>) {
+        if (isClosed) return
         watchedFolders.addAll(foldersToAdd)
         refreshWatcherLibrary()
     }
@@ -50,12 +52,14 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
      */
     @Synchronized
     fun removeFolders(foldersToRemove: List<Path>) {
+        if (isClosed) return
         watchedFolders.removeAll(foldersToRemove)
         refreshWatcherLibrary()
     }
 
     @Synchronized
     override fun close() {
+        isClosed = true
         watcher?.close()
     }
 
