@@ -16,15 +16,15 @@ class FileWatcher: Closeable {
     private val watcher: Watcher = Watcher(object : Watcher.WatcherCallback {
 
         override fun onCreated(path: Path) {
-            indexer.addPathToIndex(path.toFile())
+            indexer.addPathToIndex(path)
         }
 
         override fun onModified(path: Path) {
-            indexer.pathModified(path.toFile())
+            indexer.pathModified(path)
         }
 
         override fun onDeleted(path: Path) {
-            indexer.removePath(path.toFile())
+            indexer.removePath(path)
         }
 
     })
@@ -32,13 +32,13 @@ class FileWatcher: Closeable {
     /**
      * Returns list of files among indexed resources that contain substring passed
      */
-    fun getFilesWithWord(substring: String): List<File> {
+    fun getFilesWithWord(substring: String): List<Path> {
         return indexer.getFilesWithWord(substring)
     }
 
-    fun addToIndex(folder: File) {
+    fun addToIndex(folder: Path) {
         indexer.addPathToIndex(folder)
-        watcher.addFolders(listOf(folder.toPath()))
+        watcher.addFolders(listOf(folder))
     }
 
     override fun close() {

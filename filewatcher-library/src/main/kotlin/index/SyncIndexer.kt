@@ -3,6 +3,7 @@ package index
 import Logger
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * @author Dmitry Borodin on 7/19/21.
@@ -11,48 +12,52 @@ internal class SyncIndexer {
 
     private val state = SynchronizedIndexState()
 
-    fun addPathToIndex(file: File): Unit = when {
-        file.isDirectory -> {
-            file.listFiles().forEach { it -> addPathToIndex(it) }
+    /**
+     * Will follow symlinks
+     */
+    fun addPathToIndex(path: Path): Unit = when {
+        Files.isDirectory(path) ||  Files.isSymbolicLink(path) -> {
+            Files.walk(path).forEach { it -> addPathToIndex(it) }
         }
-        file.isFile -> {
-            val type = Files.probeContentType(file.toPath())
+        Files.isRegularFile(path) -> {
+            val type = Files.probeContentType(path)
             if (type.contains("text")) {
-                addTextFileToIndex(file)
+                addTextFileToIndex(path)
             } else {
                 //nothing
             }
         }
         else -> {
-            Logger.debug("cannot add since not a directory and not a file $file")
+            Logger.debug("cannot add since not a directory and not a file $path")
         }
     }
 
-    private fun addTextFileToIndex(file: File) {
+    private fun addTextFileToIndex(file: Path) {
         file
+            .toFile()
             .forEachLine(Charsets.UTF_8) { it -> it.split("\\s+".toRegex())
                 .forEach { state.add(it, file) }
             }
     }
 
-    fun pathModified(file: File) {
+    fun pathModified(file: Path) {
         removePath(file)
         addPathToIndex(file)
     }
 
-    fun removePath(file: File): Unit = when {
-        file.isDirectory -> {
-            file.listFiles().forEach { it -> removePath(it) }
+    fun removePath(path: Path): Unit = when {
+        Files.isDirectory(path) ||  Files.isSymbolicLink(path) -> {
+            Files.walk(path).forEach { it -> removePath(it) }
         }
-        file.isFile -> {
-            state.removeFile(file)
+        Files.isRegularFile(path) -> {
+            state.removeFile(path)
         }
         else -> {
-            Logger.debug("cannot remove since not a directory and not a file $file")
+            Logger.debug("cannot remove since not a directory and not a file $path")
         }
     }
 
-    fun getFilesWithWord(word: String): List<File> {
+    fun getFilesWithWord(word: String): List<Path> {
         return state.getFilesForWork(word)
     }
 }

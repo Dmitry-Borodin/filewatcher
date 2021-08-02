@@ -3,6 +3,7 @@ package watcher
 import io.methvin.watcher.DirectoryChangeEvent
 import io.methvin.watcher.DirectoryWatcher
 import java.io.Closeable
+import java.nio.file.Files
 import java.nio.file.Path
 
 /**
@@ -63,3 +64,6 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
         fun onDeleted(path: Path)
     }
 }
+
+internal val Path.isFile: Boolean = Files.isRegularFile(this)
+internal val Path.isDirectoryToFollow: Boolean = Files.isDirectory(this) || Files.isSymbolicLink(this)
