@@ -38,21 +38,21 @@ class FileWatcher: Closeable {
      * Add folder or file content of which will be indexed. This will follow symbolic links.
      */
     fun addToIndex(path: Path) {
-        indexer.addPathToIndex(path)
         watcher.addPaths(listOf(path))
+        indexer.addPathToIndex(path)
     }
 
     /**
      * Add folders or files content of which will be indexed. This will follow symbolic links.
      */
     fun addToIndex(folders: List<Path>) {
-        folders.forEach { indexer.addPathToIndex(it) }
         watcher.addPaths(folders)
+        folders.forEach { indexer.addPathToIndex(it) }
     }
 
     fun removeFromIndex(folders: List<Path>) {
-        folders.forEach { indexer.removePath(it) }
         watcher.removeFolders(folders)
+        folders.forEach { indexer.removePath(it) }
     }
 
     override fun close() {

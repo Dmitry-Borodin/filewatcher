@@ -1,8 +1,6 @@
 package index
 
-import Logger
 import watcher.isDirectoryToFollow
-import watcher.isFile
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -15,6 +13,8 @@ internal class SyncIndexer {
 
     /**
      * Will follow symlinks
+     * Can be called few times for the same file (like when added when original index was still in progress)
+     *
      */
     fun addPathToIndex(path: Path) {
         if (!path.toFile().canRead()) return
@@ -51,9 +51,9 @@ internal class SyncIndexer {
             }
     }
 
-    fun pathModified(file: Path) {
-        removePath(file)
-        addPathToIndex(file)
+    fun pathModified(path: Path) {
+        removePath(path)
+        addPathToIndex(path)
     }
 
     fun removePath(path: Path): Unit = when {
