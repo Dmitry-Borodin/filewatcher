@@ -1,7 +1,7 @@
 package index.syncindexer
 
 import index.Indexer
-import watcher.isDirectoryToFollow
+import watcher.isDirectory
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.isHidden
@@ -26,7 +26,7 @@ internal class SyncIndexer : Indexer {
         if (path.isHidden()) return
 
         when {
-            path.isDirectoryToFollow() -> {
+            path.isDirectory() -> {
                 path.listDirectoryEntries()
 //                    .parallel() //that makes it async but doesn't improve performance with current indexer
                     .forEach { it ->
@@ -67,7 +67,7 @@ internal class SyncIndexer : Indexer {
     }
 
     override fun removePath(path: Path): Unit = when {
-        path.isDirectoryToFollow() -> {
+        path.isDirectory() -> {
             Files
                 .walk(path)
                 .filter { it != path }
