@@ -8,9 +8,14 @@ import java.nio.file.Path
  */
 class FileValidator {
 
-    //some .kt files are not text files according to this method. Fixme
-    fun isTestFile(path: Path): Boolean {
+    //Files.probeContentType checking file extension and not marking all text files.
+    // For example works for *.java but not for *.kt Fixme find better solution
+    fun isTextFile(path: Path): Boolean {
         val type: String? = Files.probeContentType(path)
-        return type?.contains("text") == true
+//        if (  path.toString().contains(".kt") && !path.endsWith(".kt")) {
+//            println("path ")
+//        }
+        return (type?.contains("text") == true) || path.toString().endsWith(".kt")
+                || path.toString().endsWith(".xml")
     }
 }

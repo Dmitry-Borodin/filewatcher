@@ -2,6 +2,9 @@ package watcher
 
 import io.methvin.watcher.DirectoryChangeEvent
 import io.methvin.watcher.DirectoryWatcher
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.io.Closeable
 import java.nio.file.Files
 import java.nio.file.Path
@@ -16,6 +19,7 @@ import java.nio.file.Path
  */
 internal class Watcher(private val callback: WatcherCallback) : Closeable {
 
+    private val job = Job()
     private var isClosed = false;
     private var watcher: DirectoryWatcher? = null
     private val watchedFolders: MutableSet<Path> = mutableSetOf()
@@ -28,6 +32,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
     }
 
     private fun refreshWatcherLibrary() {
+        GlobalScope.launch {  //todo remove Global scope
         watcher?.close()
         watcher = DirectoryWatcher.builder()
             .paths(watchedFolders.toList())
@@ -45,6 +50,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
             }
             .build()
             .also { it.watchAsync() }
+        }
     }
 
     /**

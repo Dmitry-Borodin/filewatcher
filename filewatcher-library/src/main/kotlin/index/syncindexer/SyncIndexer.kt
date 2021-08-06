@@ -3,7 +3,6 @@ package index.syncindexer
 import index.FileValidator
 import index.Indexer
 import watcher.isDirectory
-import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.isHidden
 import kotlin.io.path.listDirectoryEntries
@@ -39,7 +38,7 @@ internal class SyncIndexer : Indexer {
             }
             //todo path.isFile() is false for non absolute path, fix it and print error for else, for example if have no permission to read
             else -> {
-                if (textValidator.isTestFile(path)) {
+                if (textValidator.isTextFile(path)) {
                     Logger.addingFile(path)
                     addTextFileToIndex(path)
                 }

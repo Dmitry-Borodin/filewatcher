@@ -35,7 +35,6 @@ fun main(args: Array<String>) {
     val foundFiles = fileWatcher.getFilesWithWord("val")
     println("timestamp " + Date().toString())
     println("files with val amount is ${foundFiles.size}")
-    println("And they are ${foundFiles}")
 
     //wait to see if some async output
     Thread.sleep(10000)

@@ -1,5 +1,6 @@
 import java.lang.RuntimeException
 import java.nio.file.Path
+import java.util.*
 
 /**
  * @author Dmitry Borodin on 7/19/21.
@@ -10,7 +11,7 @@ internal object Logger {
     private var filesIndexed = 0L //this is not synced, this value is very approximate and not currect
     private var foldersIndexed = 0L //this is not synced, this value is very approximate and not currect
     private var wordsForEachFileIndexed = 0L //this is not synced, this value is very approximate and not currect
-
+    private var start: Date = Date()
     fun debug(message: String) {
         if (Configuration.isDebug) {
             println("Debug message: $message")
@@ -29,7 +30,7 @@ internal object Logger {
         if (!Configuration.isDebug) return
         filesIndexed++
 //        println("file $file")
-        if (filesIndexed%100 == 0L) {
+        if (filesIndexed % 100 == 0L) {
             printStats()
         }
     }
@@ -46,7 +47,8 @@ internal object Logger {
     }
 
     private fun printStats() {
-        print("\rFiles indexed $filesIndexed    Folders indexed $foldersIndexed Words indexed $wordsForEachFileIndexed ")
+        val speed : Long = filesIndexed * 1000 / (Date().time - start.time)  //files per second
+        print("\rFiles indexed $filesIndexed    Folders indexed $foldersIndexed Words indexed $wordsForEachFileIndexed  speed is $speed fps")
     }
 
     fun fileNotText(file: Path) {
