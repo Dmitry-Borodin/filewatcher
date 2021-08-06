@@ -16,19 +16,19 @@ fun main(args: Array<String>) {
 
     val start = Date()
     println("starting index")
-    println("timestamp $start")
+    println("timestamp start $start")
 
     //we can start tracking it's content
     val fileWatcher = FileWatcher()
     fileWatcher.addToIndex(folder.toPath())
 
     println()
-    println("index finished")
+    println("index returned")
     val finish = Date()
     if (finish.time - start.time < 10_000) { //took longer than 10s
-        println("timestamp " + finish.toString() + " it took " + (finish.time - start.time) + " ms")
+        println("timestamp finish " + finish.toString() + " it took " + (finish.time - start.time) + " ms")
     } else {
-        println("timestamp " + finish.toString() + " it took " + (finish.time/1000 - start.time/1000) + " seconds")
+        println("timestamp finish " + finish.toString() + " it took " + (finish.time/1000 - start.time/1000) + " seconds")
     }
 
     //now we can get files by word, that is contained in watched folder
