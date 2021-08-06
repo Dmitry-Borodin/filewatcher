@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Dmitry Borodin on 7/19/21.
  */
 internal class SynchronizedIndexState {
-    private val state = ConcurrentHashMap<String, Set<Path>>()
+    private val state = ConcurrentHashMap<String, Set<Path>>()  // word to list of files it's present
 
     fun add(word: String, file: Path) {
         if (!file.isFile()) Logger.error("add file was not a file")
@@ -18,18 +18,18 @@ internal class SynchronizedIndexState {
         }
     }
 
-    @Synchronized
+    //todo write test for parallel modification to check consistency
     fun removeFile(file: Path) {
         if (!file.isFile()) Logger.error("add file was not a file")
-        val iterator = state.iterator()
-        while (iterator.hasNext()) {
-            val entry = iterator.next()
-            if (entry.value.contains(file)) {
-                if (entry.value.size == 1) {
-                    iterator.remove()
+
+        val elementsPerThread = 1000L
+        state.forEach(elementsPerThread) { word, files ->
+            if (files.contains(file)) {
+                if (files.size == 1) {
+                    state.remove(word)
                 } else {
-                    val newSet = entry.value.filterTo(hashSetOf()) { it != file }
-                    entry.setValue(newSet)
+                    val newSet = files.filterTo(hashSetOf()) { it != file }
+                    state[word] = newSet
                 }
             }
         }
