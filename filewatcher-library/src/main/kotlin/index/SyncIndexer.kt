@@ -3,6 +3,7 @@ package index
 import watcher.isDirectoryToFollow
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.isHidden
 
 /**
  * @author Dmitry Borodin on 7/19/21.
@@ -10,7 +11,7 @@ import java.nio.file.Path
 internal class SyncIndexer {
 
     private val state = SynchronizedIndexState()
-
+    private val wordsInLineRegex = "\\s+".toRegex()
     /**
      * Will follow symlinks
      * Can be called few times for the same file (like when added when original index was still in progress)
@@ -18,13 +19,16 @@ internal class SyncIndexer {
      */
     fun addPathToIndex(path: Path) {
         if (!path.toFile().canRead()) return
+        if (path.isHidden()) return
 
         when {
             path.isDirectoryToFollow() -> {
                 Files
                     .walk(path)
+//                    .parallel() //that makes it async but doesn't improve performance with current indexer
                     .filter { it != path }
                     .forEach { it ->
+                        Logger.addingFolder(it)
                         addPathToIndex(it)
                     }
             }
@@ -47,8 +51,11 @@ internal class SyncIndexer {
         file
             .toFile()
             .forEachLine(Charsets.UTF_8) { it ->
-                it.split("\\s+".toRegex())
-                    .forEach { state.add(it, file) }
+                it.split(wordsInLineRegex)
+                    .forEach {
+                        Logger.addingWord(file)
+                        state.add(it, file)
+                    }
             }
     }
 
