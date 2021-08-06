@@ -30,8 +30,8 @@ internal class SyncIndexer {
             }
             //todo path.isFile() is false for non absolute path, fix it and print error for else, for example if have no permission to read
             else -> {
-                val type = Files.probeContentType(path)
-                if (type.contains("text")) {
+                val type: String? = Files.probeContentType(path)
+                if (type?.contains("text") == true) {
                     addTextFileToIndex(path)
                 } else {
                     //nothing
@@ -42,6 +42,7 @@ internal class SyncIndexer {
 
     private fun addTextFileToIndex(file: Path) {
         if (!file.toFile().canRead()) return
+        Logger.addingFile(file)
 
         file
             .toFile()
