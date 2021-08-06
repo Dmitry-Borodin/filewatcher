@@ -1,5 +1,6 @@
 package index.syncindexer
 
+import index.FileValidator
 import index.Indexer
 import watcher.isDirectory
 import java.nio.file.Files
@@ -16,6 +17,7 @@ internal class SyncIndexer : Indexer {
 
     private val state = SynchronizedIndexState()
     private val wordsInLineRegex = "\\s+".toRegex()
+    private val textValidator = FileValidator()
     /**
      * Will follow symlinks
      * Can be called few times for the same file (like when added when original index was still in progress)
@@ -27,20 +29,17 @@ internal class SyncIndexer : Indexer {
 
         when {
             path.isDirectory() -> {
+                Logger.addingFolder(path)
                 path.listDirectoryEntries()
 //                    .parallel() //that makes it async but doesn't improve performance with current indexer
                     .forEach { it ->
-                        Logger.addingFolder(it)
                         addPathToIndex(it)
                     }
             }
             //todo path.isFile() is false for non absolute path, fix it and print error for else, for example if have no permission to read
             else -> {
-                val type: String? = Files.probeContentType(path)
-                if (type?.contains("text") == true) {
+                if (textValidator.isTestFile(path)) {
                     addTextFileToIndex(path)
-                } else {
-                    //nothing
                 }
             }
         }
@@ -48,7 +47,6 @@ internal class SyncIndexer : Indexer {
 
     private fun addTextFileToIndex(file: Path) {
         if (!file.toFile().canRead()) return
-        Logger.addingFile(file)
 
         file
             .toFile()

@@ -7,9 +7,9 @@ import java.nio.file.Path
 
 internal object Logger {
 
-    var filesIndexed = 0L //this is not synced, this value is very approximate and not currect
-    var foldersIndexed = 0L //this is not synced, this value is very approximate and not currect
-    var wordsForEachFileIndexed = 0L //this is not synced, this value is very approximate and not currect
+    private var filesIndexed = 0L //this is not synced, this value is very approximate and not currect
+    private var foldersIndexed = 0L //this is not synced, this value is very approximate and not currect
+    private var wordsForEachFileIndexed = 0L //this is not synced, this value is very approximate and not currect
 
     fun debug(message: String) {
         if (Configuration.isDebug) {
@@ -28,13 +28,15 @@ internal object Logger {
     fun addingFile(file: Path) {
         if (!Configuration.isDebug) return
         filesIndexed++
-//        if (filesIndexed%100 == 0L) {
+//        println("file $file")
+        if (filesIndexed%100 == 0L) {
             printStats()
-//        }
+        }
     }
 
     fun addingFolder(file: Path) {
         if (!Configuration.isDebug) return
+//        println("folder $file")
         foldersIndexed++
     }
 
@@ -45,5 +47,10 @@ internal object Logger {
 
     private fun printStats() {
         print("\rFiles indexed $filesIndexed    Folders indexed $foldersIndexed Words indexed $wordsForEachFileIndexed ")
+    }
+
+    fun fileNotText(file: Path) {
+        if (!Configuration.isDebug) return
+        println("fileN not text $file")
     }
 }

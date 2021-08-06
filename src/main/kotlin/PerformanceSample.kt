@@ -8,8 +8,8 @@ import java.util.*
 fun main(args: Array<String>) {
 
     //given we have a folder with content
-//    val folder = File("../../other/intellij-community/")
-    val folder = File("../../other/cloc/")
+    val folder = File("../../other/intellij-community/")
+//    val folder = File("../../other/cloc/")
     if (!folder.exists()) {
         throw RuntimeException("coudn't find directory")
     }
