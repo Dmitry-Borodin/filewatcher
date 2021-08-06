@@ -1,9 +1,9 @@
 package index
 
 import index.dispatchindexer.DispatchIndexer
-import index.syncindexer.SyncIndexer
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -52,14 +52,12 @@ internal class DispatchIndexerTest {
                 out.write("some boring text A")
             }
         indexer.addPathToIndex(testFolder)
-        Thread.sleep(100)
         textFile.printWriter().use { out ->
             out.write("new text")
         }
         indexer.pathModified(testFolder)
-        Thread.sleep(100)
-        assertEquals(1, indexer.getFilesWithWord("new").size)
         assertEquals(0, indexer.getFilesWithWord("boring").size)
+        assertEquals(1, indexer.getFilesWithWord("new").size)
     }
 
     @Test

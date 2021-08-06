@@ -32,27 +32,26 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable, Corou
 
     @OptIn(ExperimentalTime::class)
     private fun refreshWatcherLibrary() {
-        launch(Dispatchers.IO) {
-            watcher?.close()
-            watcher = DirectoryWatcher.builder()
-                .paths(watchedFolders.toList())
-                .listener { dirChangeEvent ->
-                    when (dirChangeEvent.eventType()!!) {
-                        DirectoryChangeEvent.EventType.CREATE -> callback.onCreated(path = dirChangeEvent.path())
-                        DirectoryChangeEvent.EventType.MODIFY -> callback.onModified(path = dirChangeEvent.path())
-                        DirectoryChangeEvent.EventType.DELETE -> callback.onDeleted(path = dirChangeEvent.path())
-                        DirectoryChangeEvent.EventType.OVERFLOW -> {
-                            //overflow occured and some events may lost, we need to recalculate index
-                            launch(Dispatchers.IO) {
-                                delay(Duration.Companion.minutes(1))
-                                addPaths(emptyList())
-                            }
+        watcher?.close()
+        watcher = DirectoryWatcher.builder()
+            .paths(watchedFolders.toList())
+            .listener { dirChangeEvent ->
+                when (dirChangeEvent.eventType()!!) {
+                    DirectoryChangeEvent.EventType.CREATE -> callback.onCreated(path = dirChangeEvent.path())
+                    DirectoryChangeEvent.EventType.MODIFY -> callback.onModified(path = dirChangeEvent.path())
+                    DirectoryChangeEvent.EventType.DELETE -> callback.onDeleted(path = dirChangeEvent.path())
+                    DirectoryChangeEvent.EventType.OVERFLOW -> {
+                        //overflow occured and some events may lost, we need to recalculate index
+                        launch(Dispatchers.IO) {
+                            delay(Duration.Companion.minutes(1))
+                            addPaths(emptyList())
                         }
                     }
                 }
-                .build() //this method blocks for 6 sec when 40k folders, this should not block user-facing api
-                .also { it.watchAsync() }
-        }
+            }
+            //this method blocks for 6 sec when 40k folders, but otherwise we may miss changes between it init() call and this method completes
+            .build()
+            .also { it.watchAsync() }
     }
 
     /**

@@ -93,7 +93,7 @@ internal class DispatchIndexer : Indexer, Closeable, CoroutineScope by MainScope
         when {
             path.isDirectory() -> {
                 path.listDirectoryEntries()
-                    .forEach { it -> removePath(it) }
+                    .forEach { it -> removePathInternal(it) }
             }
             else -> {
                 state.removeFile(path)

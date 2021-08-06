@@ -3,6 +3,8 @@ package index.dispatchindexer
 import Logger
 import watcher.isFile
 import java.nio.file.Path
+import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * @author Dmitry Borodin on 7/19/21.
@@ -22,10 +24,8 @@ internal class NonSynchronizedIndexState {
     }
 
     fun removeFile(file: Path) {
-        if (!file.isFile()) Logger.error("add file was not a file")
-
-        val elementsPerThread = 1000L
-        state.forEach { (word, files) ->
+        LinkedList(state.keys).forEach { word: String ->
+            val files = state[word]!!
             if (files.contains(file)) {
                 if (files.size == 1) {
                     state.remove(word)

@@ -2,6 +2,7 @@ import index.createResourceFolder
 import index.deleteResourceFolder
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -11,8 +12,10 @@ import java.io.File
  */
 internal class FileWatcherTest {
 
+    private lateinit var fileWatcher: FileWatcher
     @BeforeEach
     fun setUp() {
+        fileWatcher = FileWatcher()
         //in case if prev tests failed and left garbage
         deleteResourceFolder()
     }
@@ -24,21 +27,20 @@ internal class FileWatcherTest {
 
     @Test
     fun addPathToIndex() {
-        val fileWatcher = FileWatcher()
         val testFolder = createResourceFolder()
         fileWatcher.addToIndex(testFolder)
-        assert(fileWatcher.getFilesWithWord("boring").isEmpty())
-        val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt")
-            .printWriter().use { out ->
+        assertTrue(fileWatcher.getFilesWithWord("boring").isEmpty())
+        val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt").apply {
+            printWriter().use { out ->
                 out.write("some boring text A")
             }
+        }
         Thread.sleep(100) //todo add handle to FileWatcher to know if sync is finished. If possible.
         assertEquals(1, fileWatcher.getFilesWithWord("boring").size)
     }
 
     @Test
     fun testHandleModifiedContent() {
-        val fileWatcher = FileWatcher()
         val testFolder = createResourceFolder()
         val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt").apply {
             printWriter().use { out ->
@@ -50,13 +52,12 @@ internal class FileWatcherTest {
             out.write("Completely Different Text")
         }
         Thread.sleep(100) //todo add handle to FileWatcher to know if sync is finished. If possible.
-        assert(fileWatcher.getFilesWithWord("boring").isEmpty())
-        assert(fileWatcher.getFilesWithWord("Text").isNotEmpty())
+        assertTrue(fileWatcher.getFilesWithWord("boring").isEmpty())
+        assertTrue(fileWatcher.getFilesWithWord("Different").isNotEmpty())
     }
 
     @Test
     fun testHandleRemovedContent() {
-        val fileWatcher = FileWatcher()
         val testFolder = createResourceFolder()
         val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt").apply {
             printWriter().use { out ->
@@ -71,7 +72,6 @@ internal class FileWatcherTest {
 
     @Test
     fun testHandleStopTracking() {
-        val fileWatcher = FileWatcher()
         val testFolder = createResourceFolder()
         val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt").apply {
             printWriter().use { out ->
@@ -85,7 +85,6 @@ internal class FileWatcherTest {
 
     @Test
     fun canTrackIndividualFilesChanges() {
-        val fileWatcher = FileWatcher()
         val testFolder = createResourceFolder()
         val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt").apply {
             printWriter().use { out ->
@@ -96,7 +95,7 @@ internal class FileWatcherTest {
         textFile.printWriter().use { out ->
             out.write("some boring text A")
         }
-        Thread.sleep(100)
-        assertEquals(true, fileWatcher.getFilesWithWord("boring").isEmpty())
+        Thread.sleep(100) //so watcher can detect changes
+        assertEquals(true, fileWatcher.getFilesWithWord("boring").isNotEmpty())
     }
 }
