@@ -28,9 +28,9 @@ internal object Logger {
     fun addingFile(file: Path) {
         if (!Configuration.isDebug) return
         filesIndexed++
-        if (filesIndexed%100 == 0L) {
+//        if (filesIndexed%100 == 0L) {
             printStats()
-        }
+//        }
     }
 
     fun addingFolder(file: Path) {

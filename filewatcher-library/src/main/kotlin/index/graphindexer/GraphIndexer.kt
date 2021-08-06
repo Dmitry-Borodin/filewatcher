@@ -1,4 +1,4 @@
-package index.GraphIndexer
+package index.graphindexer
 
 /**
  * @author Dmitry Borodin on 7/19/21.

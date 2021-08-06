@@ -1,14 +1,18 @@
-package index
+package index.syncindexer
 
+import index.Indexer
 import watcher.isDirectoryToFollow
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.isHidden
+import kotlin.io.path.listDirectoryEntries
 
 /**
  * @author Dmitry Borodin on 7/19/21.
+ *
+ * This indexer supports
  */
-internal class SyncIndexer {
+internal class SyncIndexer : Indexer {
 
     private val state = SynchronizedIndexState()
     private val wordsInLineRegex = "\\s+".toRegex()
@@ -17,16 +21,14 @@ internal class SyncIndexer {
      * Can be called few times for the same file (like when added when original index was still in progress)
      *
      */
-    fun addPathToIndex(path: Path) {
+    override fun addPathToIndex(path: Path) {
         if (!path.toFile().canRead()) return
         if (path.isHidden()) return
 
         when {
             path.isDirectoryToFollow() -> {
-                Files
-                    .walk(path)
+                path.listDirectoryEntries()
 //                    .parallel() //that makes it async but doesn't improve performance with current indexer
-                    .filter { it != path }
                     .forEach { it ->
                         Logger.addingFolder(it)
                         addPathToIndex(it)
@@ -59,12 +61,12 @@ internal class SyncIndexer {
             }
     }
 
-    fun pathModified(path: Path) {
+    override fun pathModified(path: Path) {
         removePath(path)
         addPathToIndex(path)
     }
 
-    fun removePath(path: Path): Unit = when {
+    override fun removePath(path: Path): Unit = when {
         path.isDirectoryToFollow() -> {
             Files
                 .walk(path)
@@ -76,7 +78,7 @@ internal class SyncIndexer {
         }
     }
 
-    fun getFilesWithWord(word: String): List<Path> {
+    override fun getFilesWithWord(word: String): List<Path> {
         return state.getFilesForWork(word)
     }
 }
