@@ -1,25 +1,24 @@
 package index
 
+import index.dispatchindexer.DispatchIndexer
 import index.syncindexer.SyncIndexer
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
-
 /**
- * @author Dmitry Borodin on 8/1/21.
+ * @author Dmitry Borodin on 8/7/21.
  */
-internal class SyncIndexerTest {
+internal class DispatchIndexerTest {
 
-    lateinit var indexer: SyncIndexer
+    lateinit var indexer: DispatchIndexer
 
     @BeforeEach
     fun setUp() {
         //in case if prev tests failed and left garbage
-        indexer = SyncIndexer()
+        indexer = DispatchIndexer()
         deleteResourceFolder()
     }
 

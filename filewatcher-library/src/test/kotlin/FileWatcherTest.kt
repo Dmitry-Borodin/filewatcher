@@ -84,7 +84,7 @@ internal class FileWatcherTest {
     }
 
     @Test
-    fun canTrackIndividualFiles() {
+    fun canTrackIndividualFilesChanges() {
         val fileWatcher = FileWatcher()
         val testFolder = createResourceFolder()
         val textFile = File(testFolder.toAbsolutePath().toString() + "/test.txt").apply {
