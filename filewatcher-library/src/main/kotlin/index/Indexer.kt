@@ -1,11 +1,12 @@
 package index
 
+import java.io.Closeable
 import java.nio.file.Path
 
 /**
  * @author Dmitry Borodin on 8/6/21.
  */
-interface Indexer {
+interface Indexer: Closeable {
     /**
      * Will follow symlinks
      * Can be called few times for the same file (like when added when original index was still in progress)

@@ -1,4 +1,5 @@
 import index.Indexer
+import index.dispatchindexer.DispatchIndexer
 import index.syncindexer.SyncIndexer
 import watcher.Watcher
 import java.io.Closeable
@@ -9,7 +10,7 @@ import java.nio.file.Path
  */
 class FileWatcher: Closeable {
 
-    private val indexer: Indexer = SyncIndexer()
+    private val indexer: Indexer = DispatchIndexer()
     private val watcher: Watcher = Watcher(object : Watcher.WatcherCallback {
 
         override fun onCreated(path: Path) {

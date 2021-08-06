@@ -18,6 +18,7 @@ internal class SyncIndexer : Indexer {
     private val state = SynchronizedIndexState()
     private val wordsInLineRegex = "\\s+".toRegex()
     private val textValidator = FileValidator()
+
     /**
      * Will follow symlinks
      * Can be called few times for the same file (like when added when original index was still in progress)
@@ -39,6 +40,7 @@ internal class SyncIndexer : Indexer {
             //todo path.isFile() is false for non absolute path, fix it and print error for else, for example if have no permission to read
             else -> {
                 if (textValidator.isTestFile(path)) {
+                    Logger.addingFile(path)
                     addTextFileToIndex(path)
                 }
             }
@@ -66,9 +68,7 @@ internal class SyncIndexer : Indexer {
 
     override fun removePath(path: Path): Unit = when {
         path.isDirectory() -> {
-            Files
-                .walk(path)
-                .filter { it != path }
+            path.listDirectoryEntries()
                 .forEach { it -> removePath(it) }
         }
         else -> {
@@ -78,5 +78,9 @@ internal class SyncIndexer : Indexer {
 
     override fun getFilesWithWord(word: String): List<Path> {
         return state.getFilesForWork(word)
+    }
+
+    override fun close() {
+        //do nothing
     }
 }
