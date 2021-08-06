@@ -2,12 +2,12 @@ package watcher
 
 import io.methvin.watcher.DirectoryChangeEvent
 import io.methvin.watcher.DirectoryWatcher
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.Closeable
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 /**
  * @author Dmitry Borodin on 8/2/21.
@@ -17,9 +17,8 @@ import java.nio.file.Path
  * folders without forcing clients to re-initialize FileWatcher
  *
  */
-internal class Watcher(private val callback: WatcherCallback) : Closeable {
+internal class Watcher(private val callback: WatcherCallback) : Closeable, CoroutineScope by MainScope() {
 
-    private val job = Job()
     private var isClosed = false;
     private var watcher: DirectoryWatcher? = null
     private val watchedFolders: MutableSet<Path> = mutableSetOf()
@@ -31,25 +30,28 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
         refreshWatcherLibrary()
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun refreshWatcherLibrary() {
-        GlobalScope.launch {  //todo remove Global scope
-        watcher?.close()
-        watcher = DirectoryWatcher.builder()
-            .paths(watchedFolders.toList())
-            .listener { dirChangeEvent ->
-                when (dirChangeEvent.eventType()!!) {
-                    DirectoryChangeEvent.EventType.CREATE -> callback.onCreated(path = dirChangeEvent.path())
-                    DirectoryChangeEvent.EventType.MODIFY -> callback.onModified(path = dirChangeEvent.path())
-                    DirectoryChangeEvent.EventType.DELETE -> callback.onDeleted(path = dirChangeEvent.path())
-                    DirectoryChangeEvent.EventType.OVERFLOW -> {
-                        //overflow occured and some events may lost, we need to recalculate index
-                        //todo add delay to not overload already overflown system
-                        addPaths(emptyList())
+        launch(Dispatchers.IO) {
+            watcher?.close()
+            watcher = DirectoryWatcher.builder()
+                .paths(watchedFolders.toList())
+                .listener { dirChangeEvent ->
+                    when (dirChangeEvent.eventType()!!) {
+                        DirectoryChangeEvent.EventType.CREATE -> callback.onCreated(path = dirChangeEvent.path())
+                        DirectoryChangeEvent.EventType.MODIFY -> callback.onModified(path = dirChangeEvent.path())
+                        DirectoryChangeEvent.EventType.DELETE -> callback.onDeleted(path = dirChangeEvent.path())
+                        DirectoryChangeEvent.EventType.OVERFLOW -> {
+                            //overflow occured and some events may lost, we need to recalculate index
+                            launch(Dispatchers.IO) {
+                                delay(Duration.Companion.minutes(1))
+                                addPaths(emptyList())
+                            }
+                        }
                     }
                 }
-            }
-            .build()
-            .also { it.watchAsync() }
+                .build() //this method blocks for 6 sec when 40k folders, this should not block user-facing api
+                .also { it.watchAsync() }
         }
     }
 
@@ -67,6 +69,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable {
     override fun close() {
         isClosed = true
         watcher?.close()
+        cancel()
     }
 
     internal interface WatcherCallback {
