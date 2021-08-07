@@ -23,16 +23,12 @@ internal class NonSynchronizedIndexState {
         }
     }
 
-    fun removeFile(file: Path) {
-        if (!file.isFile()) Logger.error("add file was not a file")
+    fun removeAllFilesIn(file: Path) {
         LinkedList(state.keys).forEach { word: String ->
             val files = state[word]!!
-            if (files.contains(file)) {
-                if (files.size == 1) {
-                    state.remove(word)
-                } else {
-                    files.remove(file)
-                }
+            val wasRemoved = files.removeIf{file.contains(it)}
+            if (wasRemoved && files.isEmpty()) {
+                state.remove(word)
             }
         }
     }

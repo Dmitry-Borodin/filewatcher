@@ -91,15 +91,7 @@ internal class DispatchIndexer : Indexer, Closeable, CoroutineScope by MainScope
      * Internal thread only!
      */
     private fun removePathInternal(path: Path) {
-        when {
-            path.isDirectory() -> {
-                path.listDirectoryEntries()
-                    .forEach { it -> removePathInternal(it) }
-            }
-            else -> {
-                state.removeFile(path)
-            }
-        }
+        state.removeAllFilesIn(path)
     }
 
     /**
