@@ -1,6 +1,5 @@
 import index.Indexer
 import index.dispatchindexer.DispatchIndexer
-import index.syncindexer.SyncIndexer
 import watcher.Watcher
 import java.io.Closeable
 import java.nio.file.Path
@@ -52,17 +51,21 @@ class FileWatcher: Closeable {
         folders.forEach { indexer.addPathToIndex(it) }
     }
 
+    /**
+     * At the moment only added folders are possible to remove, not subfolders
+     */
     fun removeFromIndex(folders: List<Path>) {
         var somethingChanged = false
+        val removedList = mutableListOf<Path>()
         folders.forEach {
             val removed = watcher.removeFolderPreparation(it)
             if (removed) {
-                indexer.removePath(it)
-                somethingChanged = true
+                removedList.add(it)
             }
         }
-        if (somethingChanged) {
+        if (removedList.isNotEmpty()) {
             watcher.refreshWatcherLibrary()
+            removedList.forEach{ indexer.removePath(it)}
         }
     }
 
