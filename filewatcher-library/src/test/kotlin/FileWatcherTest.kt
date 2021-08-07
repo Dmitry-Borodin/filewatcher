@@ -48,6 +48,7 @@ internal class FileWatcherTest {
             }
         }
         fileWatcher.addToIndex(testFolder)
+        assertTrue(fileWatcher.getFilesWithWord("boring").isNotEmpty())
         textFile.printWriter().use { out ->
             out.write("Completely Different Text")
         }

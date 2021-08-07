@@ -35,7 +35,6 @@ internal class DispatchIndexer : Indexer, Closeable, CoroutineScope by MainScope
      */
     private fun addPathToIndexInternal(path: Path) {
         if (!path.toFile().canRead()) return
-        if (path.isHidden()) return
 
         when {
             path.isDirectory() -> {

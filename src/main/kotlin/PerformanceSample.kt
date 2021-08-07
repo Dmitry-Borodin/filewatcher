@@ -33,11 +33,12 @@ fun main(args: Array<String>) {
 
     //now we can get files by word, that is contained in watched folder
     val foundFiles = fileWatcher.getFilesWithWord("val")
-    println("timestamp " + Date().toString())
+    println()
+    println("timestamp after getting files " + Date().toString())
     println("files with val amount is ${foundFiles.size}")
 
     //wait to see if some async output
-    Thread.sleep(10000)
+    Thread.sleep(1000)
     //can stop tracking if we don't need it anymore, to save resources on keeping index up to date
     fileWatcher.close()
 }

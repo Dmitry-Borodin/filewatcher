@@ -25,7 +25,6 @@ internal class SyncIndexer : Indexer {
      */
     override fun addPathToIndex(path: Path) {
         if (!path.toFile().canRead()) return
-        if (path.isHidden()) return
 
         when {
             path.isDirectory() -> {

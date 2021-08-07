@@ -24,6 +24,7 @@ internal class NonSynchronizedIndexState {
     }
 
     fun removeFile(file: Path) {
+        if (!file.isFile()) Logger.error("add file was not a file")
         LinkedList(state.keys).forEach { word: String ->
             val files = state[word]!!
             if (files.contains(file)) {

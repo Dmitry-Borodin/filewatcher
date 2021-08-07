@@ -32,6 +32,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable, Corou
 
     @OptIn(ExperimentalTime::class)
     private fun refreshWatcherLibrary() {
+        Logger.debug("Started watcher refreshing")
         watcher?.close()
         watcher = DirectoryWatcher.builder()
             .paths(watchedFolders.toList())
@@ -52,6 +53,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable, Corou
             //this method blocks for 6 sec when 40k folders, but otherwise we may miss changes between it init() call and this method completes
             .build()
             .also { it.watchAsync() }
+        Logger.debug("Finish watcher refreshing")
     }
 
     /**
