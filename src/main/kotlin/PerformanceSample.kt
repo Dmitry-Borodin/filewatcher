@@ -1,6 +1,7 @@
 import java.io.File
 import java.lang.RuntimeException
 import java.util.*
+import kotlin.io.path.Path
 
 /**
  * This is to see performance
@@ -36,6 +37,10 @@ fun main(args: Array<String>) {
     println()
     println("timestamp after getting files " + Date().toString())
     println("files with val amount is ${foundFiles.size}")
+
+    fileWatcher.removeFromIndex(listOf(folder.toPath()))
+
+    println("timestamp after removing " + Date().toString())
 
     //wait to see if some async output
     Thread.sleep(1000)

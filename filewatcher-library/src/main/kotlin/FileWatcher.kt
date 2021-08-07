@@ -53,8 +53,17 @@ class FileWatcher: Closeable {
     }
 
     fun removeFromIndex(folders: List<Path>) {
-        watcher.removeFolders(folders)
-        folders.forEach { indexer.removePath(it) }
+        var somethingChanged = false
+        folders.forEach {
+            val removed = watcher.removeFolderPreparation(it)
+            if (removed) {
+                indexer.removePath(it)
+                somethingChanged = true
+            }
+        }
+        if (somethingChanged) {
+            watcher.refreshWatcherLibrary()
+        }
     }
 
     override fun close() {

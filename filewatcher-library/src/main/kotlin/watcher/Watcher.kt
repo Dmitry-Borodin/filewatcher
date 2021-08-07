@@ -31,7 +31,7 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable, Corou
     }
 
     @OptIn(ExperimentalTime::class)
-    private fun refreshWatcherLibrary() {
+    fun refreshWatcherLibrary() {
         Logger.debug("Started watcher refreshing")
         watcher?.close()
         watcher = DirectoryWatcher.builder()
@@ -58,12 +58,12 @@ internal class Watcher(private val callback: WatcherCallback) : Closeable, Corou
 
     /**
      * Currently doesn't support child folders e.q. you cannot exclude subfolder from watched parent folder
+     * Doesn't update watcher, call refreshWatcherLibrary() after all changes complete
      */
     @Synchronized
-    fun removeFolders(foldersToRemove: List<Path>) {
-        if (isClosed) return
-        watchedFolders.removeAll(foldersToRemove)
-        refreshWatcherLibrary()
+    fun removeFolderPreparation(folderToRemove: Path): Boolean {
+        if (isClosed) return false
+        return watchedFolders.remove(folderToRemove)
     }
 
     @Synchronized
