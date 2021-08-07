@@ -14,7 +14,7 @@ internal object Logger {
     private var start: Date = Date()
     fun debug(message: String) {
         if (Configuration.isDebug) {
-            println("Debug message: $message")
+            println("Debug message: $message timestamp ${Date()}")
         }
     }
 
