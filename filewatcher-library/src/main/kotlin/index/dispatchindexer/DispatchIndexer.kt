@@ -81,7 +81,9 @@ internal class DispatchIndexer : Indexer, Closeable, CoroutineScope by MainScope
 
     override fun removePath(path: Path) {
         launch(singleThreadDispatcher) {
+            Logger.debug("removing path started for path $path")
             removePathInternal(path)
+            Logger.debug("removing path finish for path $path")
         }
     }
 
